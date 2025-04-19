@@ -2,13 +2,11 @@ using Samples.Purchasing.Core.BuyingConsumables;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
+//using UnityEngine.Localization.Settings;
 using System.Threading.Tasks;
-using Unity.Collections.LowLevel.Unsafe;
 
 public class UnityServicesInitializer : MonoBehaviour
 {
-
     public static UnityServicesInitializer instance;
     public bool userAuthenticated = false;
 
@@ -25,23 +23,25 @@ public class UnityServicesInitializer : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    void Start()
+
+    private void Start()
     {
-        //turn black screen on to stop player pressing buttons while online services initialize
+        // Show black screen to block player input while initializing
         transform.GetChild(0).gameObject.SetActive(true);
         Audio.instance.GetComponent<AudioSource>().Stop();
-        SetLangugeIfChanged();
+
+        SetLanguageIfChanged();
         PreWarmAnimations();
 
         Invoke("TurnBlackScreenOffAndStartGame", 1.75f);
-        InitializeUnityOnlineServices();    
+        InitializeUnityOnlineServices();
     }
 
     public async void InitializeUnityOnlineServices()
     {
         await UnityServices.InitializeAsync();
 
-        // Check if the player is already signed in
+        // Authenticate user anonymously if not already signed in
         if (!AuthenticationService.Instance.IsSignedIn)
         {
             try
@@ -58,65 +58,67 @@ public class UnityServicesInitializer : MonoBehaviour
         {
             Debug.Log("User already authenticated!");
         }
-        
 
-        // Online Only Functions
         if (userAuthenticated)
         {
-            // get randomly assigned unity name or created name for sign in option
-            DisplayNameManager.Instance.GetPlayerName();
-         
-            //submit top score to leaderBoard incase player was offline when last trying to submit it
-
-            await LeaderboardManager.Instance.Save100thScoreInLeaderBoard("HighScore");
-            await LeaderboardManager.Instance.Save100thScoreInLeaderBoard("High_Score_Stage_2");
-
-            //shorthand way of setting a bool
-            bool hasAcceptedLeaderboardUpload = PlayerPrefs.GetInt("AcceptLeaderBoardUpload") == 1;
-
-            if (SaveSystem.HasKey("BestCombinedTimeAndScore"))
-            {
-                int bestScore = (SaveSystem.GetInt("BestCombinedTimeAndScore"));
-
-                if (bestScore > LeaderboardManager.LastScoreLeaderBoard1)
-                {
-                    if (hasAcceptedLeaderboardUpload)
-                    {
-                        LeaderboardManager.Instance.SubmitScoreLeaderBoard1(SaveSystem.GetInt("BestCombinedTimeAndScore"));
-                    }
-                    else
-                    {
-                        CanvasManager.instance.ToggleConsentCanvas(true);
-                    }
-                }
-            }
-
-            if (SaveSystem.HasKey("BestCombinedTimeAndScore2"))
-            {
-                int bestScore = (SaveSystem.GetInt("BestCombinedTimeAndScore2"));
-
-                if (bestScore > LeaderboardManager.LastScoreLeaderBoard2)
-                {
-                    if (hasAcceptedLeaderboardUpload)
-                    {
-                        LeaderboardManager.Instance.SubmitScoreLeaderBoard2(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
-                    }
-                    else
-                    {
-                        CanvasManager.instance.ToggleConsentCanvas(true);
-                    }
-                }
-            }
+            await SaveOfflineLeaderboardScores();
+            HandleLeaderboardUploadConsent();
         }
 
         DisplayNameManager.Instance.SetUnityIdIfconnectionLostWhenSavingIt();
+        HandleOffensiveUsernameCheck();
+        ResetLegacyHighScoresIfNeeded();
+    }
 
+    private async Task SaveOfflineLeaderboardScores()
+    {
+        await LeaderboardManager.Instance.SaveLastScoreInLeaderBoard("HighScore");
+        await LeaderboardManager.Instance.SaveLastScoreInLeaderBoard("High_Score_Stage_2");
+    }
+
+    private void HandleLeaderboardUploadConsent()
+    {
+        bool hasConsent = PlayerPrefs.GetInt("AcceptLeaderBoardUpload") == 1;
+
+        if (SaveSystem.HasKey("BestCombinedTimeAndScore"))
+        {
+            int bestScore = SaveSystem.GetInt("BestCombinedTimeAndScore");
+            if (bestScore > LeaderboardManager.LastScoreLeaderBoard1)
+            {
+                if (hasConsent)
+                    LeaderboardManager.Instance.SubmitScoreLeaderBoard1(bestScore);
+                else
+                    CanvasManager.instance.ToggleConsentCanvas(true);
+            }
+        }
+
+        if (SaveSystem.HasKey("BestCombinedTimeAndScore2"))
+        {
+            int bestScore = SaveSystem.GetInt("BestCombinedTimeAndScore2");
+            if (bestScore > LeaderboardManager.LastScoreLeaderBoard2)
+            {
+                if (hasConsent)
+                    LeaderboardManager.Instance.SubmitScoreLeaderBoard2(bestScore);
+                else
+                    CanvasManager.instance.ToggleConsentCanvas(true);
+            }
+        }
+    }
+
+    private void HandleOffensiveUsernameCheck()
+    {
         string playerName = PlayerPrefs.GetString("playerName");
 
-        if (DisplayNameManager.Instance.IsUsernameOffensive(playerName) == true)
+        if (DisplayNameManager.Instance.IsUsernameOffensive(playerName) &&
+            !CanvasManager.instance.inputNameCanvas.activeSelf)
         {
-            if (CanvasManager.instance.inputNameCanvas.activeSelf == false) CanvasManager.instance.TogglePickUsernameCanvas();
+            CanvasManager.instance.TogglePickUsernameCanvas();
         }
+    }
+
+    private void ResetLegacyHighScoresIfNeeded()
+    {
+        string playerName = PlayerPrefs.GetString("playerName");
 
         if (PlayerPrefs.GetInt("ResetNonUpdatedScores") != 1)
         {
@@ -139,8 +141,8 @@ public class UnityServicesInitializer : MonoBehaviour
     {
         CanvasManager.instance.continueStreakPrize[SaveSystem.GetInt("ContinueStreakPrize")].SetActive(true);
     }
-             
-    public void SetLangugeIfChanged()
+
+    public void SetLanguageIfChanged()
     {
         if (PlayerPrefs.HasKey("Language") && LanguageManager.instance != null)
         {
@@ -161,7 +163,7 @@ public class UnityServicesInitializer : MonoBehaviour
 
     public void TurnBlackScreenOffAndStartGame()
     {
-        if (Audio.instance.GetComponent<AudioSource>().isPlaying == false)
+        if (!Audio.instance.GetComponent<AudioSource>().isPlaying)
         {
             Audio.instance.GetComponent<AudioSource>().Play();
         }
@@ -171,16 +173,13 @@ public class UnityServicesInitializer : MonoBehaviour
         if (userAuthenticated)
         {
             AdsInitializer.instance.InitializeAds();
-
-            //ensures in app purchased birds animate after game startsec
-            InAppPurchasings.instance.InitializePurchasing();
+            InAppPurchasing.instance.InitializePurchasing();
 
             PlayerPrefs.SetInt("ResetNonUpdatedScores", 1);
             PlayerPrefs.SetInt("ResetNonUpdatedScores2", 1);
         }
 
-        // turn black screen off
-        transform.GetChild(0).gameObject.SetActive(false);    
+        // Hide black screen
+        transform.GetChild(0).gameObject.SetActive(false);
     }
 }
-

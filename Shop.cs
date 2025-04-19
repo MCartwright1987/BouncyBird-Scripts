@@ -20,12 +20,12 @@ public class Shop : MonoBehaviour
         instance = this;
     }
 
-    public void BuyTenSkipAdTokens() => InAppPurchasings.instance.BuyTenSkipAdTokens();
-    public void BuyThirtySkipAdTokens() => InAppPurchasings.instance.BuyThirtySkipAdTokens();
-    public void BuyRemoveAds() => InAppPurchasings.instance.BuyRemoveAds();
-    public void BuyGreenBird() => InAppPurchasings.instance.BuyGreenBird();
-    public void BuyPinkBird() => InAppPurchasings.instance.BuyPinkBird();
-    public void BuyRedBird() => InAppPurchasings.instance.BuyRedBird();
+    public void BuyTenSkipAdTokens() => InAppPurchasing.instance.BuyTenSkipAdTokens();
+    public void BuyThirtySkipAdTokens() => InAppPurchasing.instance.BuyThirtySkipAdTokens();
+    public void BuyRemoveAds() => InAppPurchasing.instance.BuyRemoveAds();
+    public void BuyGreenBird() => InAppPurchasing.instance.BuyGreenBird();
+    public void BuyPinkBird() => InAppPurchasing.instance.BuyPinkBird();
+    public void BuyRedBird() => InAppPurchasing.instance.BuyRedBird();
 
-    public void RestorePurchases() => InAppPurchasings.instance.RestorePurchases();
+    public void RestorePurchases() => InAppPurchasing.instance.RestorePurchases();
 }

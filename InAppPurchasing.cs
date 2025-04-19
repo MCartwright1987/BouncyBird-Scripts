@@ -7,9 +7,9 @@ using TMPro;
 
 namespace Samples.Purchasing.Core.BuyingConsumables
 {
-    public class InAppPurchasings : MonoBehaviour, IDetailedStoreListener
+    public class InAppPurchasing : MonoBehaviour, IDetailedStoreListener
     {
-        public static InAppPurchasings instance;
+        public static InAppPurchasing instance;
 
         IStoreController m_StoreController; // The Unity Purchasing system.
         private IExtensionProvider m_ExtensionProvider;

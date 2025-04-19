@@ -92,7 +92,7 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
-    public async Task Save100thScoreInLeaderBoard(string leaderBoardId)
+    public async Task SaveLastScoreInLeaderBoard(string leaderBoardId)
     {
         leaderboardId = leaderBoardId;
 

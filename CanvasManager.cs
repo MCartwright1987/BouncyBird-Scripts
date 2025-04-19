@@ -464,7 +464,7 @@ public class CanvasManager : MonoBehaviour
             restorePurchasesBtn.SetActive(false);
         }
 
-        InAppPurchasings.instance.UpdateStorePrices();
+        InAppPurchasing.instance.UpdateStorePrices();
         Transform shopItems = shopCanvas.transform.GetChild(0).transform.GetChild(1);
 
         for (int i = 3; i <= 5; i++)

@@ -795,14 +795,14 @@ public class GameManager : MonoBehaviour
             CanvasManager.instance.internetUnreachableCanvas.transform.GetChild(0).transform.GetChild(4).gameObject.SetActive(true);
 
             AdsInitializer.instance.InitializeAds();
-            InAppPurchasings.instance.InitializePurchasing();
+            InAppPurchasing.instance.InitializePurchasing();
 
             DisplayNameManager.Instance.SetUnityIdIfconnectionLostWhenSavingIt();
 
             RewardedAdsButton.instance.LoadAd();
 
-            await LeaderboardManager.Instance.Save100thScoreInLeaderBoard("HighScore");
-            await LeaderboardManager.Instance.Save100thScoreInLeaderBoard("High_Score_Stage_2");
+            await LeaderboardManager.Instance.SaveLastScoreInLeaderBoard("HighScore");
+            await LeaderboardManager.Instance.SaveLastScoreInLeaderBoard("High_Score_Stage_2");
         }
     }
 
