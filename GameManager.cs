@@ -187,15 +187,10 @@ public class GameManager : MonoBehaviour
     {
         if (timerActive)
         {
-            //if (PickUpsManager.instance.TimeSlowed)
-            //{
-            //    sessionTime += Time.deltaTime * 1.42857f; // turns 70% to 100%
-            //}
             sessionTime += Time.deltaTime;
     
             UpdateTimer();
         }
-        //else SetScreenSize(); //REMOVE THIS FOR BUILD
     }
 
     public void SetScreenSize() // from 20x9 and wider

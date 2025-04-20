@@ -10,40 +10,26 @@ public class Trajectory : MonoBehaviour
     public GameObject trajectoryPointPrefab;
 
     private Rigidbody2D rb;
-    private CircleCollider2D circleCollider;
     public GameObject[] trajectoryPoints;
-    private float[] pointDeactivationTimes; 
+    private float[] pointDeactivationTimes = new float[100];
 
     private void Start()
     {
         instance = this;
 
         rb = GetComponent<Rigidbody2D>();
-
-        // Initialize the trajectory points array
-        int arraySize = 100;
-        trajectoryPoints = new GameObject[arraySize];
-        pointDeactivationTimes = new float[arraySize];
-
-        for (int i = 0; i < arraySize; i++)
-        {
-            GameObject point = Instantiate(trajectoryPointPrefab);
-            point.SetActive(false);
-            trajectoryPoints[i] = point;
-        }
     }
 
     private void Update()
     {
-        // Check if any trajectory points should be deactivated
-        DeactivateTrajectoryPoints();
-
-        //DrawTrajectory();
+        if (trajectoryPoints.Any(p => p.activeSelf))
+        {
+            DeactivateTrajectoryPoints();
+        }
     }
 
     public void DrawTrajectory()
-    {
-        // Clear existing active trajectory points
+    {       
         ClearTrajectory();
         
         Vector2 initialMovablePanelPositionion = transform.position;
@@ -69,7 +55,7 @@ public class Trajectory : MonoBehaviour
             point.SetActive(true);
 
             pointDeactivationTimes[i] = currentTime + time;
-        }
+        }  
     }
 
     private Vector2 CalculatePositionAtTime(Vector2 initialMovablePanelPositionion, Vector2 initialVelocity, float time)

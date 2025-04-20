@@ -80,7 +80,6 @@ public class DebugManager : MonoBehaviour
 
     // these are the hidden buttons on the main screen that have to be 
     //pressed in order to access the debug menu used for testing
-
     public void Button1()
     {
         button1.SetActive(false);
