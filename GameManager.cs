@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject newHighScoreText;
 
     public static int levelNumber = 1;
+    private int numberOfLevels = 2;
 
     bool disableThumbSpace = false;
 
@@ -85,8 +86,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] RectTransform birdSelectTransform;
     [SerializeField] RectTransform stageSelectTransform;
-
-    public int tempValue = 0;
 
     void Start()
     {
@@ -134,26 +133,10 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void TestBirdAnimation()
-    {
-        UnlockBirdAnimation.instance.PlayAnimation(tempValue, true);
-        tempValue++;
-    }
-
-    //public void UnlockPlayer(string saveKey, int animationIndex, bool fliped)
-    //{
-    //    if (SaveSystem.GetBool(saveKey) == false)
-    //    {
-    //        SaveSystem.SetBool(saveKey, true);
-    //        UnlockBirdAnimation.instance.PlayAnimation(animationIndex, fliped);
-    //    }
-    //}
-
-
     public void SwitchLevel()
     {
-        if (levelNumber == 2) levelNumber = 1;
-        else levelNumber = 2;
+        if (levelNumber < numberOfLevels) levelNumber++;
+        else levelNumber = 1;
 
         UpdateLevel();
     }
@@ -678,19 +661,10 @@ public class GameManager : MonoBehaviour
         } 
     }
 
-    public void ReduceScoreToOne()
-    {
-        int combinedScore = CombineScoreAndTime(1, 61, 0);
-
-        SaveSystem.SetInt("BestCombinedTimeAndScore", combinedScore);
-        SaveSystem.SetInt("BestCombinedTimeAndScore2", combinedScore);
-
-        LeaderboardManager.Instance.SubmitScoreLeaderBoard1(combinedScore);
-        LeaderboardManager.Instance.SubmitScoreLeaderBoard2(combinedScore);
-    }
-
     public int CombineScoreAndTime(int score, float timeInSeconds, int flag)
     {
+        //This is to combine all the data i need for the leaderboard into one int
+
         // Scale time to an integer
         int scaledTime = Mathf.RoundToInt(timeInSeconds);
 
@@ -746,7 +720,6 @@ public class GameManager : MonoBehaviour
     public void LoadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-  
     }
 
     IEnumerator ActivateContinue()
@@ -815,61 +788,5 @@ public class GameManager : MonoBehaviour
     public void OpenPrivacyPolicy()
     {
         Application.OpenURL("https://www.blogger.com/blog/post/edit/862660359855154186/8565106823714256058");
-    }
-
-    public void ToggleDebugPad()
-    {
-        if (debugPad.activeSelf == true) debugPad.SetActive(false);
-        else debugPad.SetActive(true);
-    }
-
-    public void UnlockEverything()
-    {
-        SaveSystem.SetBool("player1Unlocked", true);
-        SaveSystem.SetBool("player2Unlocked", true);
-        SaveSystem.SetBool("player3Unlocked", true);
-        SaveSystem.SetBool("player4Unlocked", true);
-        SaveSystem.SetBool("player5Unlocked", true);
-        SaveSystem.SetBool("player6Unlocked", true);
-        SaveSystem.SetBool("player7Unlocked", true);
-        SaveSystem.SetBool("player8Unlocked", true);
-        SaveSystem.SetBool("player9Unlocked", true);
-        SaveSystem.SetBool("player10Unlocked", true);
-
-        SaveSystem.SetInt("AdsRemoved", 1);
-
-        AdsInitializer.instance.gameObject.SetActive(false);
-        skipAdsTokensTopOfScreen.SetActive(false);
-        StartScreenPlayAdBtn.SetActive(false);
-    }
-
-    public void LockEverything()
-    {
-        SaveSystem.SetBool("player1Unlocked", false);
-        SaveSystem.SetBool("player2Unlocked", false);
-        SaveSystem.SetBool("player3Unlocked", false);
-        SaveSystem.SetBool("player4Unlocked", false);
-        SaveSystem.SetBool("player5Unlocked", false);
-        SaveSystem.SetBool("player6Unlocked", false);
-        SaveSystem.SetBool("player7Unlocked", false);
-        SaveSystem.SetBool("player8Unlocked", false);
-        SaveSystem.SetBool("player9Unlocked", false);
-        SaveSystem.SetBool("player10Unlocked", false);
-
-        SaveSystem.SetInt("AdsRemoved", 0);
-
-        AdsInitializer.instance.InitializeAds();
-
-        AdsInitializer.instance.gameObject.SetActive(true);
-        skipAdsTokensTopOfScreen.SetActive(true);
-        StartScreenPlayAdBtn.SetActive(true);
-
-        SaveSystem.SetInt("BestCombinedTimeAndScore", 0);
-    }
-
-    public void SetAskForReviewToZero()
-    {
-        PlayerPrefs.SetInt("ReviewAsked", 0);
-        PlayerPrefs.Save(); // Save the PlayerPrefs to disk
     }
 }

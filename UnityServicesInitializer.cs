@@ -124,7 +124,7 @@ public class UnityServicesInitializer : MonoBehaviour
         {
             if (playerName.StartsWith("Joker9018") || playerName.StartsWith("Dragonracer333"))
             {
-                GameManager.instance.ReduceScoreToOne();
+                DebugManager.Instance.ReduceScoreToOne();
             }
         }
 
@@ -132,7 +132,7 @@ public class UnityServicesInitializer : MonoBehaviour
         {
             if (playerName.StartsWith("Dragonracer333"))
             {
-                GameManager.instance.ReduceScoreToOne();
+                DebugManager.Instance.ReduceScoreToOne();
             }
         }
     }
