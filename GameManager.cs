@@ -55,8 +55,6 @@ public class GameManager : MonoBehaviour
     public GameObject crateExplosionParticleSystem;
 
     [SerializeField] float inGameElapsedTime = 0f;
-    private const float timeInterval = 900f; // 10 minutes in seconds 600
-    private DateTime lastSavedTime;
 
     public static bool gameStarted;
 
@@ -79,8 +77,6 @@ public class GameManager : MonoBehaviour
 
     public static int levelNumber = 1;
     private int numberOfLevels = 2;
-
-    bool disableThumbSpace = false;
 
     public float canvasMultiple;
 
@@ -130,7 +126,6 @@ public class GameManager : MonoBehaviour
         SetScreenSize();
 
         UpdateLevel();
-
     }
 
     public void SwitchLevel()
@@ -730,7 +725,7 @@ public class GameManager : MonoBehaviour
         addLivesAnimation.GetComponent<Animator>().enabled = false;
     }
 
-    public async void TryConnectAds()
+    public async void TryConnectInternet()
     {
         await UnityServices.InitializeAsync();
 
