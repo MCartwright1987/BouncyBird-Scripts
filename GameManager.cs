@@ -218,8 +218,6 @@ public class GameManager : MonoBehaviour
 
             // move the pause button
             pauseButton.anchoredPosition = new Vector2(pauseButton.anchoredPosition.x + (screenWidthDifferenceFromDefault/2), pauseButton.anchoredPosition.y);
-            //score.anchoredPosition = new Vector2(score.anchoredPosition.x + (screenWidthDifferenceFromDefault / 2), score.anchoredPosition.y);
-            //bestScore.anchoredPosition = new Vector2(bestScore.anchoredPosition.x - (screenWidthDifferenceFromDefault / 2), bestScore.anchoredPosition.y);
             score.localPosition = new Vector2(107.5f + (screenWidthDifferenceFromDefault / 2f), score.localPosition.y);
             bestScore.localPosition = new Vector2(-107.5f - (screenWidthDifferenceFromDefault / 2f), bestScore.localPosition.y);
             //scale and move the thumbspace
@@ -270,9 +268,9 @@ public class GameManager : MonoBehaviour
             stageSelectTransform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.001f), 1 + (screenWidthDifferenceFromDefault * 0.001f));
 
             foreach (var rectTransform in CanvasManager.instance.StartScreenCanvases)
-           {
+            {
                 rectTransform.localScale = new Vector2(2.57f + (screenWidthDifferenceFromDefault * canvasMultiple), 2.57f + (screenWidthDifferenceFromDefault * canvasMultiple));
-           }
+            }
 
         }
     }
@@ -495,7 +493,7 @@ public class GameManager : MonoBehaviour
         CanvasManager.instance.startScreenCanvas.SetActive(false);
         CanvasManager.instance.ActivateStartScreenAnimations();
 
-        StartCoroutine(LerpNumberTransparency(0, 0.4196078f, 0.5f));
+        StartCoroutine(LerpNumberTransparency());
 
         CanvasManager.instance.inGameCanvas.SetActive(true);
         PlayerSelectMenu.instance.UpdateSpritesAndCollidersOnPlay();
@@ -520,16 +518,16 @@ public class GameManager : MonoBehaviour
         CanvasManager.instance.worldSelectCanvas.SetActive(false);
     }
 
-    IEnumerator LerpNumberTransparency(float from, float to, float duration)
+    IEnumerator LerpNumberTransparency()
     {
         TextMeshProUGUI number0 = CanvasManager.instance.levelNumbersCanvas.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         
         float TransparencyValue = 0;
         float elapsed = 0f;
-        while (elapsed < duration)
+        while (elapsed < 0.5f)
         {
             elapsed += Time.deltaTime;
-            TransparencyValue = Mathf.Lerp(from, to, elapsed / duration);
+            TransparencyValue = Mathf.Lerp(0, 0.4196078f, elapsed / 0.5f);
             number0.color = new Color(0, 0.5437484f, 1, TransparencyValue);
             yield return null;
         }
