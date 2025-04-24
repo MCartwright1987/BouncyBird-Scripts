@@ -22,10 +22,10 @@ public class GameManager : MonoBehaviour
 
     public GameObject redButtons;
     public GameObject startBtn;
-    [SerializeField] GameObject pauseBtn;
+    public GameObject pauseBtn;
     [SerializeField] GameObject resumeBtn;
     [SerializeField] GameObject deleteHighScoreBtn;
-    [SerializeField] GameObject releaseBirdButton;
+    public GameObject releaseBirdButton;
     [SerializeField] Button skipAdBtn;
     public GameObject StartScreenPlayAdBtn;
 
@@ -35,12 +35,10 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI skipAdsText;
     public TextMeshProUGUI sessionTimeText;
-    [SerializeField] TextMeshProUGUI scoreTxt;
-    [SerializeField] TextMeshProUGUI bestScoreTxt;
+    public TextMeshProUGUI scoreTxt;
+    public TextMeshProUGUI bestScoreTxt;
 
-    [SerializeField] RectTransform canvasRectTransform;
-
-    [SerializeField] Transform mainCamTransform;
+    public Transform mainCamTransform;
     public Transform spawningObjectsAnchor;
 
     public int screenTransitionsCounter;
@@ -49,9 +47,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform TowerNumbersParent;
 
     [SerializeField] GameObject advanceLevelTrigger;
-    [SerializeField] Transform mountainsSectionOfBackGround;
-    [SerializeField] Transform mountainsSectionOfBackGround2;
-    [SerializeField] Transform WorldSelectCanvas;
+
     public GameObject crateExplosionParticleSystem;
 
     [SerializeField] float inGameElapsedTime = 0f;
@@ -73,15 +69,10 @@ public class GameManager : MonoBehaviour
 
     public GameObject skipAdsTokensTopOfScreen;
 
-    [SerializeField] GameObject newHighScoreText;
+    public GameObject newHighScoreText;
 
     public static int levelNumber = 1;
     private int numberOfLevels = 2;
-
-    public float canvasMultiple;
-
-    [SerializeField] RectTransform birdSelectTransform;
-    [SerializeField] RectTransform stageSelectTransform;
 
     void Start()
     {
@@ -123,7 +114,7 @@ public class GameManager : MonoBehaviour
             ReviewManager.Instance.RequestReview();
         }
 
-        SetScreenSize();
+        DisplayManager.instance.SetScreenSize();
 
         UpdateLevel();
     }
@@ -185,93 +176,6 @@ public class GameManager : MonoBehaviour
             sessionTime += Time.deltaTime;
     
             UpdateTimer();
-        }
-    }
-
-    public void SetScreenSize() // from 20x9 and wider
-    {
-        RectTransform titleSpace = CanvasManager.instance.startScreenCanvas.transform.GetChild(0).GetComponent<RectTransform>();
-
-        RectTransform thumbSpace = CanvasManager.instance.inGameCanvas.transform.GetChild(0).GetComponent<RectTransform>();
-        RectTransform thumbArrowLeft = thumbSpace.GetChild(2).GetComponent<RectTransform>();
-        RectTransform thumbArrowRight = thumbSpace.GetChild(1).GetComponent<RectTransform>();
-        RectTransform pauseButton = pauseBtn.GetComponent<RectTransform>();
-        RectTransform bestScore = bestScoreTxt.transform.parent.GetComponent<RectTransform>();
-        RectTransform score = scoreTxt.transform.parent.GetComponent<RectTransform>();
-
-        Transform UnlockBirdAnimationAnchor = mainCamTransform.GetChild(0).transform;
-        Transform unlockBirdText = UnlockBirdAnimation.instance.UnlockBirdText.transform;
-
-        // if screen width larger than default
-        if (canvasRectTransform.rect.width > 276) // canvasRectTransform.rect.width < 377)// 340 was max
-        {
-            float screenWidthDifferenceFromDefault = Mathf.Min(canvasRectTransform.rect.width - 278, 99);
-
-            float newCameraSizeReduction = screenWidthDifferenceFromDefault * 0.035f; // 0.039
-
-            //zoom and move thecamera
-            Camera.main.orthographicSize = 12 - newCameraSizeReduction;
-            
-            //move camera position to suit the ui
-            float newCameraYpositionAdition = screenWidthDifferenceFromDefault * 0.019f;
-            mainCamTransform.position = new Vector3(0, newCameraYpositionAdition, -10);
-
-            // move the pause button
-            pauseButton.anchoredPosition = new Vector2(pauseButton.anchoredPosition.x + (screenWidthDifferenceFromDefault/2), pauseButton.anchoredPosition.y);
-            score.localPosition = new Vector2(107.5f + (screenWidthDifferenceFromDefault / 2f), score.localPosition.y);
-            bestScore.localPosition = new Vector2(-107.5f - (screenWidthDifferenceFromDefault / 2f), bestScore.localPosition.y);
-            //scale and move the thumbspace
-            thumbSpace.localPosition = new Vector2(0, screenWidthDifferenceFromDefault * -1);
-            thumbArrowLeft.localPosition = new Vector2(-84.5f - screenWidthDifferenceFromDefault, -252.5f + screenWidthDifferenceFromDefault * 0.5f);
-            thumbArrowRight.localPosition = new Vector2(84.5f + screenWidthDifferenceFromDefault, -252.5f + screenWidthDifferenceFromDefault * 0.5f);
-
-            if (canvasRectTransform.rect.width > 342)
-            {
-                thumbArrowLeft.gameObject.SetActive(false);
-                thumbArrowRight.gameObject.SetActive(false);
-            }
-            else
-            {
-                thumbArrowLeft.gameObject.SetActive(true);
-                thumbArrowRight.gameObject.SetActive(true);
-            }
-
-            float newArrowScale = 0.5f - (screenWidthDifferenceFromDefault * 0.003f);
-
-            thumbArrowRight.localScale = new Vector2(newArrowScale, newArrowScale);
-            thumbArrowLeft.localScale = new Vector2(newArrowScale, newArrowScale);
-
-            UnlockBirdAnimationAnchor.localPosition = new Vector2(0, screenWidthDifferenceFromDefault * -0.022f);
-            unlockBirdText.localPosition = new Vector2(0, unlockBirdText.localPosition.y + (screenWidthDifferenceFromDefault * 0.2f));
-
-            newHighScoreText.transform.localPosition = new Vector2(0, newHighScoreText.transform.localPosition.y + (screenWidthDifferenceFromDefault * 0.2f));
-            //move mountains background
-            mountainsSectionOfBackGround.localPosition = new Vector2(0, 2.8f - (screenWidthDifferenceFromDefault * 0.011f));
-            mountainsSectionOfBackGround2.localPosition = new Vector2(3.13f, -6.27f - (screenWidthDifferenceFromDefault * 0.011f));
-
-            WorldSelectCanvas.localPosition = new Vector2(0, -106.7f - (screenWidthDifferenceFromDefault * 0.25f));
-            //move floor object
-            PickUpsManager.instance.floorObject.transform.localPosition = new Vector3(0, -7.95f - (screenWidthDifferenceFromDefault * 0.005f), 11);
-
-            titleSpace.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.5f), 0);
-            titleSpace.transform.GetChild(1).transform.localPosition = new Vector3(0, -252.5f - (screenWidthDifferenceFromDefault * -0.25f), 0);
-
-            redButtons.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.2f), 0);
-
-            redButtons.transform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.0016f), 1 + (screenWidthDifferenceFromDefault * 0.0016f));
-            releaseBirdButton.transform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.0016f), 1 + (screenWidthDifferenceFromDefault * 0.0016f));
-
-            birdSelectTransform.anchoredPosition = new Vector2(0, 0 - (screenWidthDifferenceFromDefault * 0.2f));
-            stageSelectTransform.anchoredPosition = new Vector2(0, -106.7f - (screenWidthDifferenceFromDefault * 0.5f));
-
-            birdSelectTransform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.001f), 1 + (screenWidthDifferenceFromDefault * 0.001f));
-            stageSelectTransform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.001f), 1 + (screenWidthDifferenceFromDefault * 0.001f));
-
-            foreach (var rectTransform in CanvasManager.instance.StartScreenCanvases)
-            {
-                rectTransform.localScale = new Vector2(2.57f + (screenWidthDifferenceFromDefault * canvasMultiple), 2.57f + (screenWidthDifferenceFromDefault * canvasMultiple));
-            }
-
         }
     }
 
