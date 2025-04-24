@@ -1,0 +1,1 @@
+Bouncy Bird:Skybound Game released on ios and android. game built in unity game engine and these are the scripts I've written to run the game. I am currently refactoring all the code to be more organised, readable and optimised
