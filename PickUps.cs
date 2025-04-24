@@ -15,7 +15,7 @@ public class PickUps : MonoBehaviour
     private void OnEnable()
     {
         //give chance to make power up better
-        int number = Random.Range(1,11); // number can only go upto 10
+        int number = Random.Range(1,11); 
         if (number == 4) upgraded = true;
     
         //upgraded = true;
@@ -25,7 +25,6 @@ public class PickUps : MonoBehaviour
             StartCoroutine(FlashColour());
             boostPower = 13.5f;
         }
-        
     }
 
     void Update()
