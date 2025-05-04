@@ -8,6 +8,7 @@ public class BackgroundsManager : MonoBehaviour
 
     public GameObject level1Background;
     public GameObject level2Background;
+    public GameObject level3Background;
 
     //Stage 1
     public GameObject greenMountains;
@@ -47,15 +48,23 @@ public class BackgroundsManager : MonoBehaviour
 
     public void SwitchBackground()
     {
-        if (GameManager.levelNumber == 2)
+        if (GameManager.levelNumber == 3)
+        {
+            level3Background.SetActive(true);
+            level1Background.SetActive(false);
+            level2Background.SetActive(false);
+        }
+        else if (GameManager.levelNumber == 2)
         {
             level1Background.SetActive(false);
             level2Background.SetActive(true);
+            level3Background.SetActive(false);
         }
         else
         {
             level1Background.SetActive(true);
             level2Background.SetActive(false);
+            level3Background.SetActive(false);
         }
     }
     
@@ -93,7 +102,7 @@ public class BackgroundsManager : MonoBehaviour
                     break;
             }
         }
-        else
+        else if (GameManager.levelNumber == 2)
         {
             switch (score)
             {

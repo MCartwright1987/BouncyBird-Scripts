@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
     public GameObject newHighScoreText;
 
     public static int levelNumber = 1;
-    private int numberOfLevels = 2;
+    private int numberOfLevels = 3;
 
     void Start()
     {
@@ -129,10 +129,26 @@ public class GameManager : MonoBehaviour
 
     public void UpdateLevel()
     {
-        if (levelNumber == 2)
+        if (levelNumber == 3)
+        {
+            moveablePanel.GetChild(2).GetChild(2).GetComponent<YellowPads>().ToggleActivatePads(true);
+            moveablePanel.GetChild(2).GetChild(1).GetComponent<YellowPads>().ToggleActivatePads(false);
+            moveablePanel.GetChild(2).GetChild(0).GetComponent<YellowPads>().ToggleActivatePads(false);
+
+            BackgroundsManager.instance.SwitchBackground();
+
+            Audio.instance.GetComponent<AudioSource>().clip = Audio.instance.Music2;
+
+            //int bestScore = GetScoreFromCombinedValue(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
+            //bestScoreTxt.text = bestScore.ToString();
+            //
+            //scoreTxt.text = PlayerPrefs.GetInt("LastScore2").ToString();
+        }
+        else if (levelNumber == 2)
         {
             moveablePanel.GetChild(2).GetChild(1).GetComponent<YellowPads>().ToggleActivatePads(true);
             moveablePanel.GetChild(2).GetChild(0).GetComponent<YellowPads>().ToggleActivatePads(false);
+            moveablePanel.GetChild(2).GetChild(2).GetComponent<YellowPads>().ToggleActivatePads(false);
 
             BackgroundsManager.instance.SwitchBackground();
 
@@ -143,10 +159,12 @@ public class GameManager : MonoBehaviour
 
             scoreTxt.text = PlayerPrefs.GetInt("LastScore2").ToString();
         }
-        else
+        else if (levelNumber == 1) 
         {
             moveablePanel.GetChild(2).GetChild(1).GetComponent<YellowPads>().ToggleActivatePads(false);
             moveablePanel.GetChild(2).GetChild(0).GetComponent<YellowPads>().ToggleActivatePads(true);
+            moveablePanel.GetChild(2).GetChild(2).GetComponent<YellowPads>().ToggleActivatePads(false);
+
 
             BackgroundsManager.instance.SwitchBackground();
 

@@ -44,14 +44,29 @@ public class WorldSelectMenu : MonoBehaviour
 
     }
 
-    public void SwitchLevel()
+    public void SwitchLevel(bool left)
     {
-        if (GameManager.levelNumber == 1)
+        int currentLevel = GameManager.levelNumber;
+
+        if (left) currentLevel--; 
+        else currentLevel++ ;
+
+        if (currentLevel < 0) currentLevel = 3;
+        if (currentLevel > 3) currentLevel = 0;
+
+
+
+        if (currentLevel == 2)
         {
             worldImageOnDisplay.sprite = worldImage[1];
             stageNumber.text = "2";
         }
-        else
+        else if (currentLevel == 3)
+        {
+            worldImageOnDisplay.sprite = worldImage[0];
+            stageNumber.text = "3";
+        }
+        else if (currentLevel == 1)
         {
             worldImageOnDisplay.sprite = worldImage[0];
             stageNumber.text = "1";
