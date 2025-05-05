@@ -22,11 +22,7 @@ public class HotAirBalloon : MonoBehaviour
 
     public void SwitchSprites()
     {
-        if (GameManager.levelNumber == 1)
-        {
-            spriteRenderer.sprite = balloon[0];
-        }
-        else spriteRenderer.sprite = balloon[1];
+        spriteRenderer.sprite = balloon[GameManager.levelNumber-1];
     }
 
     void Update()

@@ -6,9 +6,7 @@ public class BackgroundsManager : MonoBehaviour
 {
     public static BackgroundsManager instance;
 
-    public GameObject level1Background;
-    public GameObject level2Background;
-    public GameObject level3Background;
+    public GameObject[] levelBackground;
 
     //Stage 1
     public GameObject greenMountains;
@@ -40,32 +38,50 @@ public class BackgroundsManager : MonoBehaviour
     public GameObject infinateSpace1_2;
     public GameObject infinateSpace2_2;
 
+    //stage 3
+    public GameObject Mountains;
+    public GameObject skySnow;
+    public GameObject bottomWhiteCloudsSnow;
+    public GameObject topWhiteCloudsSnow;
+    public GameObject nightSnow;
+    public GameObject space1Snow;
+    public GameObject space2Snow;
+    public GameObject infinateSpace1Snow;
+    public GameObject infinateSpace2Snow;
+
+    [SerializeField] GameObject snowParticleEffects;
+    [SerializeField] ParticleSystemRenderer ButterfliesAcross;
+    [SerializeField] ParticleSystemRenderer ButterfliesDisperse;
+
+    [SerializeField] Texture2D[] ButterfliesMaterial;
+
     private Dictionary<int, Action> scoreEvents = new Dictionary<int, Action>();
     void Start()
     {
         instance = this;
     }
 
+    public void ActivateSnow(bool activate)
+    {
+        if (activate) snowParticleEffects.SetActive(true);
+        else snowParticleEffects.SetActive(false);
+    }
+
+    public void SwitchButterflyColor()
+    {
+        ButterfliesAcross.material.mainTexture = ButterfliesMaterial[GameManager.levelNumber-1];
+        ButterfliesDisperse.material.mainTexture = ButterfliesMaterial[GameManager.levelNumber - 1];
+    }
+
+
+
     public void SwitchBackground()
     {
-        if (GameManager.levelNumber == 3)
+        foreach (GameObject g in levelBackground)
         {
-            level3Background.SetActive(true);
-            level1Background.SetActive(false);
-            level2Background.SetActive(false);
+            g.SetActive(false);
         }
-        else if (GameManager.levelNumber == 2)
-        {
-            level1Background.SetActive(false);
-            level2Background.SetActive(true);
-            level3Background.SetActive(false);
-        }
-        else
-        {
-            level1Background.SetActive(true);
-            level2Background.SetActive(false);
-            level3Background.SetActive(false);
-        }
+        levelBackground[GameManager.levelNumber-1].SetActive(true);
     }
     
 
@@ -106,7 +122,6 @@ public class BackgroundsManager : MonoBehaviour
         {
             switch (score)
             {
-
                 case 3:
                     MiddleClouds.SetActive(true);
                     break;
@@ -124,6 +139,36 @@ public class BackgroundsManager : MonoBehaviour
                     break;
                 case 47:
                     infinateSpace2_2.SetActive(true);
+                    break;
+            }
+        }
+        else if (GameManager.levelNumber == 3)
+        {
+            switch (score)
+            {
+                case 2:
+                    skySnow.SetActive(true);
+                    break;
+                case 3:
+                    bottomWhiteCloudsSnow.SetActive(true);
+                    break;
+                case 6:
+                    topWhiteCloudsSnow.SetActive(true);
+                    break;
+                case 9:
+                    nightSnow.SetActive(true);
+                    break;
+                case 16:
+                    space1Snow.SetActive(true);
+                    break;
+                case 25:
+                    space2Snow.SetActive(true);
+                    break;
+                case 36:
+                    infinateSpace1Snow.SetActive(true);
+                    break;
+                case 47:
+                    infinateSpace2Snow.SetActive(true);
                     break;
             }
         }
@@ -150,7 +195,7 @@ public class BackgroundsManager : MonoBehaviour
                 case 10:
                     Destroy(sky);
                     break;
-                case 12:
+                case 13:
                     Destroy(topWhiteClouds);
                     break;
                 case 15:
@@ -171,7 +216,7 @@ public class BackgroundsManager : MonoBehaviour
             }
           
         }
-        else
+        else if (GameManager.levelNumber == 2)
         {
             switch (score)
             {
@@ -201,6 +246,34 @@ public class BackgroundsManager : MonoBehaviour
                     break;
             }
         }
+        else if (GameManager.levelNumber == 3)
+        {
+            switch (score)
+            {
+                case 7:
+                    Destroy(Mountains);
+                    break;
+                case 9:
+                    Destroy(bottomWhiteCloudsSnow);
+                    break;
+                case 10:
+                    Destroy(skySnow);
+                    break;
+                case 13:
+                    Destroy(topWhiteCloudsSnow);
+                    break;
+                case 18:
+                    Destroy(nightSnow);
+                    break;
+                case 28:
+                    Destroy(space1Snow);
+                    break;
+                case 39:
+                    Destroy(space2Snow);
+                    break;
+            }
+
+        }
 
         // Update infinite space for scores >= 50
         if (score >= 50)
@@ -222,12 +295,15 @@ public class BackgroundsManager : MonoBehaviour
             {
                 infinateSpace1.transform.localPosition = new Vector2(0, infinateSpace1.transform.localPosition.y + offset);
             }
-            else
+            else if (GameManager.levelNumber == 2)
             {
                 infinateSpace1_2.transform.localPosition = new Vector2(0, infinateSpace1.transform.localPosition.y + offset);
             }
+            else if (GameManager.levelNumber == 3)
+            {
+                infinateSpace1Snow.transform.localPosition = new Vector2(0, infinateSpace1Snow.transform.localPosition.y + offset);
+            }
 
-            
         }
         else if (score % 40 == 20 || score % 40 == 0) // For scores like 60, 80, 100, etc.
         {
@@ -235,11 +311,15 @@ public class BackgroundsManager : MonoBehaviour
             {
                 infinateSpace2.transform.localPosition = new Vector2(0, infinateSpace2.transform.localPosition.y + offset);
             }
-            else
+            else if (GameManager.levelNumber == 2)
             {
                 infinateSpace2_2.transform.localPosition = new Vector2(0, infinateSpace2.transform.localPosition.y + offset);
             }
-                
+            else if (GameManager.levelNumber == 3)
+            {
+                infinateSpace2Snow.transform.localPosition = new Vector2(0, infinateSpace2Snow.transform.localPosition.y + offset);
+            }
+
         }
     }
 }

@@ -220,8 +220,13 @@ public class PickUpsManager : MonoBehaviour
     public void ActivateOranges(bool upgraded)
     {
         Audio.instance.oranges.Play();
-       
-        if (GameManager.levelNumber == 2) 
+
+        if (GameManager.levelNumber == 3)
+        {
+            offsetLevel2 = 6;
+            noFlatYellows = 2;
+        }
+        else if (GameManager.levelNumber == 2) 
         {
             offsetLevel2 = 3;
             noFlatYellows = 1; //allows full range of yellows for level 2

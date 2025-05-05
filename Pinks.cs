@@ -16,12 +16,14 @@ public class Pinks : MonoBehaviour
 
     private void OnEnable()
     {
-        if (GameManager.levelNumber == 2) 
-        {
-            moveDownwards = true;
-            transform.position = new Vector2(transform.position.x, GameManager.instance.spawningObjectsAnchor.position.y + 11);
-        }
+      // if (GameManager.levelNumber == 2) 
+      // {
+      //     moveDownwards = true;
+      //     transform.position = new Vector2(transform.position.x, GameManager.instance.spawningObjectsAnchor.position.y + 11);
+      // }
     }
+
+
 
     void Update()
     {  
@@ -35,29 +37,36 @@ public class Pinks : MonoBehaviour
 
             if (triggeredNextPink == false)
             {
-                if (transform.localPosition.y < GameManager.instance.spawningObjectsAnchor.position.y + 5)
+                if (gameObject == PinksManager.instance.highestPink)
                 {
-                    PinksManager.instance.SpawnPink();
-                    triggeredNextPink = true;
-                }
+                    if (transform.localPosition.y < GameManager.instance.spawningObjectsAnchor.position.y + 5)
+                    {
+                        PinksManager.instance.SpawnPink();
+                        triggeredNextPink = true;
+                    }
+                }              
             }
             
             if (transform.localPosition.y < GameManager.instance.spawningObjectsAnchor.position.y - 11)
             {
                 gameObject.SetActive(false);
                 triggeredNextPink = false;
+                PinksManager.instance.AssignLowestPink();
             }
         }
         else
         {
             transform.Translate(Vector2.up * Time.deltaTime * speed, Space.World);
 
-            if (triggeredNextPink == false)
+            if (gameObject == PinksManager.instance.lowestPink)
             {
-                if (transform.localPosition.y > GameManager.instance.spawningObjectsAnchor.position.y - 3)
+                if (triggeredNextPink == false)
                 {
-                    PinksManager.instance.SpawnPink();
-                    triggeredNextPink = true;
+                    if (transform.localPosition.y > GameManager.instance.spawningObjectsAnchor.position.y - 3)
+                    {
+                        PinksManager.instance.SpawnPink();
+                        triggeredNextPink = true;
+                    }
                 }
             }
 
@@ -65,6 +74,7 @@ public class Pinks : MonoBehaviour
             {
                 gameObject.SetActive(false);
                 triggeredNextPink = false;
+                PinksManager.instance.AssignHighestPink();
             }
         }
 

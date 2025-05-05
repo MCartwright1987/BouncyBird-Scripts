@@ -40,6 +40,8 @@ public class DebugManager : MonoBehaviour
         GameManager.instance.StartScreenPlayAdBtn.SetActive(true);
 
         SaveSystem.SetInt("BestCombinedTimeAndScore", 0);
+        SaveSystem.SetInt("BestCombinedTimeAndScore2", 0);
+        SaveSystem.SetInt("BestCombinedTimeAndScore3", 0);
     }
 
     public void UnlockEverything()
@@ -73,9 +75,11 @@ public class DebugManager : MonoBehaviour
 
         SaveSystem.SetInt("BestCombinedTimeAndScore", combinedScore);
         SaveSystem.SetInt("BestCombinedTimeAndScore2", combinedScore);
+        SaveSystem.SetInt("BestCombinedTimeAndScore3", combinedScore);
 
         LeaderboardManager.Instance.SubmitScoreLeaderBoard1(combinedScore);
         LeaderboardManager.Instance.SubmitScoreLeaderBoard2(combinedScore);
+        LeaderboardManager.Instance.SubmitScoreLeaderBoard3(combinedScore);
     }
 
     // these are the hidden buttons on the main screen that have to be 

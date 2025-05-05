@@ -32,6 +32,11 @@ public class WorldSelectMenu : MonoBehaviour
             stageNumber.text = "2";
 
         }
+        else if (GameManager.levelNumber == 3)
+        {
+            worldImageOnDisplay.sprite = worldImage[2];
+            stageNumber.text = "3";
+        }
     }
 
     public void ResetUnlocks()
@@ -51,10 +56,8 @@ public class WorldSelectMenu : MonoBehaviour
         if (left) currentLevel--; 
         else currentLevel++ ;
 
-        if (currentLevel < 0) currentLevel = 3;
-        if (currentLevel > 3) currentLevel = 0;
-
-
+        if (currentLevel < 1) currentLevel = 3;
+        if (currentLevel > 3) currentLevel = 1;
 
         if (currentLevel == 2)
         {
@@ -63,7 +66,7 @@ public class WorldSelectMenu : MonoBehaviour
         }
         else if (currentLevel == 3)
         {
-            worldImageOnDisplay.sprite = worldImage[0];
+            worldImageOnDisplay.sprite = worldImage[2];
             stageNumber.text = "3";
         }
         else if (currentLevel == 1)
@@ -72,6 +75,8 @@ public class WorldSelectMenu : MonoBehaviour
             stageNumber.text = "1";
         }
 
-        GameManager.instance.SwitchLevel();
+        GameManager.levelNumber = currentLevel;
+
+        GameManager.instance.UpdateLevel();
     }
 }

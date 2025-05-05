@@ -41,6 +41,7 @@ public class LeaderboardManager : MonoBehaviour
     private bool isLoadingMore = false;
     public static int LastScoreLeaderBoard1 = 0;
     public static int LastScoreLeaderBoard2 = 0;
+    public static int LastScoreLeaderBoard3 = 0;
 
     public int thisPlayerRank;
 
@@ -92,6 +93,20 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
+    public async void SubmitScoreLeaderBoard3(long score)
+    {
+        leaderboardId = "High_Score_Stage_3";
+
+        try
+        {
+            await LeaderboardsService.Instance.AddPlayerScoreAsync(leaderboardId, score);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to submit score: " + e.Message);
+        }
+    }
+
     public async Task SaveLastScoreInLeaderBoard(string leaderBoardId)
     {
         leaderboardId = leaderBoardId;
@@ -103,21 +118,21 @@ public class LeaderboardManager : MonoBehaviour
 
             if (scoresResponse.Results.Count < 200)
             {
-                // If there are less than 100 scores, save the last score to PlayerPrefs
                 if (scoresResponse.Results.Count > 0)
                 {
                     var lastScore = scoresResponse.Results[scoresResponse.Results.Count - 1].Score;
                     if (leaderBoardId == "HighScore") LastScoreLeaderBoard1 = (int)lastScore;
                     else if (leaderBoardId == "High_Score_Stage_2") LastScoreLeaderBoard2 = (int)lastScore;
+                    else if (leaderBoardId == "High_Score_Stage_3") LastScoreLeaderBoard3 = (int)lastScore;
                 }
             }
             else
             {
-                // If there are 100 or more scores, save the 100th score
                 var hundredthScore = scoresResponse.Results[199].Score;
 
                 if (leaderBoardId == "HighScore") LastScoreLeaderBoard1 = (int)hundredthScore;
                 else if (leaderBoardId == "High_Score_Stage_2") LastScoreLeaderBoard2 = (int)hundredthScore;
+                else if (leaderBoardId == "High_Score_Stage_3") LastScoreLeaderBoard3 = (int)hundredthScore;
             }
         }
         catch (System.Exception e)
@@ -128,7 +143,8 @@ public class LeaderboardManager : MonoBehaviour
 
     public async Task<LeaderboardScoresPage> GetLeaderboardScores(int offset)
     {
-        if (GameManager.levelNumber == 2) leaderboardId = "High_Score_Stage_2";
+        if (GameManager.levelNumber == 3) leaderboardId = "High_Score_Stage_3";
+        else if (GameManager.levelNumber == 2) leaderboardId = "High_Score_Stage_2";
         else leaderboardId = "HighScore";
 
         try

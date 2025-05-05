@@ -59,6 +59,8 @@ public class CanvasManager : MonoBehaviour
 
     bool howToPlayOpenedFromSettingsMenu = false;
 
+    [SerializeField] GameObject levelImage;
+
     private void Awake()
     {
         instance = this;     
@@ -77,7 +79,10 @@ public class CanvasManager : MonoBehaviour
         {
             animation.enabled = true;
         }
+
+        levelImage.SetActive(false);
     }
+
 
     public void ShowAd() => RewardedAdsButton.instance.ShowAd();
 
@@ -228,6 +233,11 @@ public class CanvasManager : MonoBehaviour
         {
             LeaderboardManager.Instance.SubmitScoreLeaderBoard2(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
         }
+
+        if (SaveSystem.HasKey("BestCombinedTimeAndScore3"))
+        {
+            LeaderboardManager.Instance.SubmitScoreLeaderBoard3(SaveSystem.GetInt("BestCombinedTimeAndScore3"));
+        }
     }
 
 
@@ -264,6 +274,22 @@ public class CanvasManager : MonoBehaviour
                 if (PlayerPrefs.GetInt("AcceptLeaderBoardUpload") == 1)
                 {
                     LeaderboardManager.Instance.SubmitScoreLeaderBoard2(newCombinedScore);
+                }
+            }
+        }
+
+        if (SaveSystem.HasKey("BestCombinedTimeAndScore3"))
+        {
+            int newCombinedScore = AddFlagToCombinedScore(SaveSystem.GetInt("BestCombinedTimeAndScore3"), flagNumber);
+            SaveSystem.SetInt("BestCombinedTimeAndScore3", newCombinedScore);
+
+            int bestScore = (GameManager.instance.GetScoreFromCombinedValue(SaveSystem.GetInt("BestCombinedTimeAndScore3")));
+
+            if (bestScore > LeaderboardManager.LastScoreLeaderBoard3)
+            {
+                if (PlayerPrefs.GetInt("AcceptLeaderBoardUpload") == 1)
+                {
+                    LeaderboardManager.Instance.SubmitScoreLeaderBoard3(newCombinedScore);
                 }
             }
         }

@@ -9,6 +9,7 @@ using MaskTransitions;
 using Unity.Services.Authentication;
 using Samples.Purchasing.Core.BuyingConsumables;
 using Unity.Services.Core;
+using Castle.Core.Logging;
 //using UnityEngine.UIElements;
 
 
@@ -119,14 +120,6 @@ public class GameManager : MonoBehaviour
         UpdateLevel();
     }
 
-    public void SwitchLevel()
-    {
-        if (levelNumber < numberOfLevels) levelNumber++;
-        else levelNumber = 1;
-
-        UpdateLevel();
-    }
-
     public void UpdateLevel()
     {
         if (levelNumber == 3)
@@ -137,12 +130,13 @@ public class GameManager : MonoBehaviour
 
             BackgroundsManager.instance.SwitchBackground();
 
-            Audio.instance.GetComponent<AudioSource>().clip = Audio.instance.Music2;
+            Audio.instance.GetComponent<AudioSource>().clip = Audio.instance.Music3;
 
-            //int bestScore = GetScoreFromCombinedValue(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
-            //bestScoreTxt.text = bestScore.ToString();
-            //
-            //scoreTxt.text = PlayerPrefs.GetInt("LastScore2").ToString();
+            int bestScore = GetScoreFromCombinedValue(SaveSystem.GetInt("BestCombinedTimeAndScore3"));
+            bestScoreTxt.text = bestScore.ToString();
+            
+            scoreTxt.text = PlayerPrefs.GetInt("LastScore3").ToString();
+            BackgroundsManager.instance.ActivateSnow(true);
         }
         else if (levelNumber == 2)
         {
@@ -158,6 +152,8 @@ public class GameManager : MonoBehaviour
             bestScoreTxt.text = bestScore.ToString();
 
             scoreTxt.text = PlayerPrefs.GetInt("LastScore2").ToString();
+
+            BackgroundsManager.instance.ActivateSnow(false);
         }
         else if (levelNumber == 1) 
         {
@@ -174,6 +170,8 @@ public class GameManager : MonoBehaviour
             bestScoreTxt.text = bestScore.ToString();
 
             scoreTxt.text = PlayerPrefs.GetInt("LastScore").ToString();
+
+            BackgroundsManager.instance.ActivateSnow(false);
         }
 
         Audio.instance.GetComponent<AudioSource>().Play();
@@ -181,6 +179,8 @@ public class GameManager : MonoBehaviour
         HotAirBalloon.Instance.SwitchSprites();
 
         Player.Instance.SwitchMoonGlowColor();
+
+        BackgroundsManager.instance.SwitchButterflyColor();
     }
 
     public void SetNewHighestScoreTrue() => PlayerPrefs.SetInt("newHighScore", 1);
@@ -203,17 +203,21 @@ public class GameManager : MonoBehaviour
 
         int bestScore = SaveSystem.GetInt("BestCombinedTimeAndScore");
         if (levelNumber == 2) bestScore = SaveSystem.GetInt("BestCombinedTimeAndScore2");
+        if (levelNumber == 3) bestScore = SaveSystem.GetInt("BestCombinedTimeAndScore3");
 
         if (Application.internetReachability != NetworkReachability.NotReachable)
         {
             bool consentFormActivated = false;
 
-            if ((levelNumber == 1 && bestScore > LeaderboardManager.LastScoreLeaderBoard1) || (levelNumber == 2 && bestScore > LeaderboardManager.LastScoreLeaderBoard2))
+            if ((levelNumber == 1 && bestScore > LeaderboardManager.LastScoreLeaderBoard1) ||
+                (levelNumber == 2 && bestScore > LeaderboardManager.LastScoreLeaderBoard2 ||
+                (levelNumber == 3 && bestScore > LeaderboardManager.LastScoreLeaderBoard3)))
             {
                 if (PlayerPrefs.GetInt("AcceptLeaderBoardUpload") == 1)
                 {
                     if (levelNumber == 1) LeaderboardManager.Instance.SubmitScoreLeaderBoard1(SaveSystem.GetInt("BestCombinedTimeAndScore"));
-                    else LeaderboardManager.Instance.SubmitScoreLeaderBoard2(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
+                    else if (levelNumber == 2) LeaderboardManager.Instance.SubmitScoreLeaderBoard2(SaveSystem.GetInt("BestCombinedTimeAndScore2"));
+                    else if (levelNumber == 3) LeaderboardManager.Instance.SubmitScoreLeaderBoard3(SaveSystem.GetInt("BestCombinedTimeAndScore3"));
                 }
                 else
                 {
@@ -371,6 +375,12 @@ public class GameManager : MonoBehaviour
         main.simulationSpeed = 1;
 
         BackgroundsManager.instance.DestroyBackGrounds(score);
+
+        if (levelNumber == 3)
+        {
+            if (score % 2 == 0) PinksManager.instance.SwitchDirectionDown(false);
+            else PinksManager.instance.SwitchDirectionDown(true);
+        }
     }
 
     void CheckChallenges()
@@ -389,7 +399,11 @@ public class GameManager : MonoBehaviour
         if (levelNumber == 2)
         {
             if (score == 8 && HotAirBalloon.Instance.levelReached < 8) UnlockPlayer("player8Unlocked", 8, true);
-            if (score == 13) UnlockPlayer("player9Unlocked", 9 ,false);
+            //if (score == 13) UnlockPlayer("player9Unlocked", 9 ,false);
+        }
+        else if (levelNumber == 3)
+        {
+            if (score == 7 && HotAirBalloon.Instance.levelReached < 7) UnlockPlayer("player9Unlocked", 9, false);
         }
     }
 
@@ -426,6 +440,8 @@ public class GameManager : MonoBehaviour
 
         Invoke("DeactivateBirdAndLevelSelectCanvases", 0.5f);
         Invoke("ToggleDisableBirdAndLevelSelect", 0.5f);
+
+        if (levelNumber == 2) PinksManager.instance.SwitchDirectionDown(true);
     }
 
     public void ToggleDisableBirdAndLevelSelect()
@@ -442,6 +458,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator LerpNumberTransparency()
     {
+        //yield return new WaitForSeconds(0.5f);
+
         TextMeshProUGUI number0 = CanvasManager.instance.levelNumbersCanvas.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         
         float TransparencyValue = 0;
@@ -568,6 +586,20 @@ public class GameManager : MonoBehaviour
                 PlayerPrefs.SetFloat("lastSessionTime2", sessionTime);
                 PlayerPrefs.SetInt("LastScore2", score);
             }
+            else if (levelNumber == 3)
+            {
+                if (combinedScore > SaveSystem.GetInt("BestCombinedTimeAndScore3") || !SaveSystem.HasKey("BestCombinedTimeAndScore3"))
+                {
+                    PlayerPrefs.SetInt("newHighScore", 1);
+
+                    // Update best score
+                    SaveSystem.SetInt("BestCombinedTimeAndScore3", combinedScore);
+                }
+
+
+                PlayerPrefs.SetFloat("lastSessionTime3", sessionTime);
+                PlayerPrefs.SetInt("LastScore3", score);
+            }
         } 
     }
 
@@ -619,6 +651,8 @@ public class GameManager : MonoBehaviour
         moveablePanel.transform.position = Vector2.zero;
         timerActive = false;
         pauseBtn.SetActive(false);
+        //restore the pads if on level 3 where they can dissapear
+        if (levelNumber == 3)moveablePanel.GetChild(2).GetChild(levelNumber-1).GetComponent<YellowPads>().ToggleActivatePads(true);
     }
 
     public void UseSkipAdToken()

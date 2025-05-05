@@ -18,7 +18,7 @@ public class Audio : MonoBehaviour
     [SerializeField] Slider musicVolumeSlider;
     [SerializeField] Slider sfxVolumeSlider;
 
-    public AudioClip Music1, Music2;
+    public AudioClip Music1, Music2, Music3;
 
     private void Start()
     {

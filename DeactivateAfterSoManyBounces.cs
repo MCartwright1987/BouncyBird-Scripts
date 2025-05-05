@@ -21,17 +21,21 @@ public class DeactivateAfterSoManyBounces : MonoBehaviour
         {
             if (currentColor.a == 1)
             {
-                currentColor.a = 0.75f;
+                currentColor.a = 0.8f;
             }
-            else if (currentColor.a == 0.75f)
+            else if (currentColor.a == 0.8f)
             {
-                currentColor.a = 0.5f;
+                currentColor.a = 0.6f;
             }
-            else if (currentColor.a == 0.5f)
+            else if (currentColor.a == 0.6f)
             {
-                currentColor.a = 0.25f;
+                currentColor.a = 0.4f;
             }
-            else if (currentColor.a == 0.25f)
+            else if (currentColor.a == 0.4f)
+            {
+                currentColor.a = 0.2f;
+            }
+            else if (currentColor.a == 0.2f)
             {
                 currentColor.a = 0;
                 GetComponent<BoxCollider2D>().enabled = false;
