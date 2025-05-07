@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MaskTransitions;
 
 public class BackgroundsManager : MonoBehaviour
 {
@@ -77,13 +78,27 @@ public class BackgroundsManager : MonoBehaviour
 
     public void SwitchBackground()
     {
+        
+
         foreach (GameObject g in levelBackground)
         {
             g.SetActive(false);
         }
         levelBackground[GameManager.levelNumber-1].SetActive(true);
+
+        //Invoke("SwitchBackground2", 0.5f);
+        
     }
-    
+
+    public void SwitchBackground2()
+    {
+        foreach (GameObject g in levelBackground)
+        {
+            g.SetActive(false);
+        }
+        levelBackground[GameManager.levelNumber - 1].SetActive(true);
+    }
+
 
     public void AddBackGrounds(int score)
     {

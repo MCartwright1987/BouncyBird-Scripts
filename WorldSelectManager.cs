@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using MaskTransitions;
 
 public class WorldSelectMenu : MonoBehaviour
 {
@@ -39,16 +40,6 @@ public class WorldSelectMenu : MonoBehaviour
         }
     }
 
-    public void ResetUnlocks()
-    {
-
-    }
-
-    public void UnlocksAllUnlocks()
-    {
-
-    }
-
     public void SwitchLevel(bool left)
     {
         int currentLevel = GameManager.levelNumber;
@@ -77,6 +68,8 @@ public class WorldSelectMenu : MonoBehaviour
 
         GameManager.levelNumber = currentLevel;
 
-        GameManager.instance.UpdateLevel();
+        GameManager.instance.ToggleDisableBirdAndLevelSelect();
+        TransitionManager.Instance.PlayTransition(0.6f);
+        GameManager.instance.UpdateLevelDelayed();
     }
 }

@@ -10,6 +10,7 @@ public class DisplayManager : MonoBehaviour
 
     [SerializeField] Transform mountainsSectionOfBackGround;
     [SerializeField] Transform mountainsSectionOfBackGround2;
+    [SerializeField] Transform mountainsSectionOfBackGround3;
 
     [SerializeField] RectTransform stageSelectTransform;
     [SerializeField] Transform stageSelectCanvas;
@@ -88,6 +89,7 @@ public class DisplayManager : MonoBehaviour
             //move mountains background
             mountainsSectionOfBackGround.localPosition = new Vector2(0, 2.8f - (screenWidthDifferenceFromDefault * 0.011f));
             mountainsSectionOfBackGround2.localPosition = new Vector2(3.13f, -6.27f - (screenWidthDifferenceFromDefault * 0.011f));
+            mountainsSectionOfBackGround3.localPosition = new Vector2(-2.77f, -0.47f + (screenWidthDifferenceFromDefault * 0.0045f));
 
             stageSelectCanvas.localPosition = new Vector2(0, -106.7f - (screenWidthDifferenceFromDefault * 0.25f));
 
@@ -97,7 +99,8 @@ public class DisplayManager : MonoBehaviour
             titleSpace.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.5f), 0);
             titleSpace.transform.GetChild(1).transform.localPosition = new Vector3(0, -252.5f - (screenWidthDifferenceFromDefault * -0.25f), 0);
 
-            GameManager.instance.redButtons.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.2f), 0);
+            //GameManager.instance.redButtons.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.2f), 0);
+            GameManager.instance.redButtons.transform.localPosition = new Vector3(0, 0 - (screenWidthDifferenceFromDefault * 0.35f), 0);
 
             GameManager.instance.redButtons.transform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.0016f), 1 + (screenWidthDifferenceFromDefault * 0.0016f));
             GameManager.instance.releaseBirdButton.transform.localScale = new Vector2(1 + (screenWidthDifferenceFromDefault * 0.0016f), 1 + (screenWidthDifferenceFromDefault * 0.0016f));

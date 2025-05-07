@@ -32,52 +32,65 @@ public class DisplayNameManager : MonoBehaviour
 
         LoadBannedWords();
         //saveNameButton.onClick.AddListener(SaveDisplayName);
+
     }
 
-    public async void GetPlayerName()
-    {      
-        try
-        {
-            // Await the call to GetPlayerNameAsync to get the player's name
-            string playerName = await AuthenticationService.Instance.GetPlayerNameAsync(true);
-            PlayerPrefs.SetString("playerName", playerName);
+    //public async void GetPlayerName()
+    //{
+    //    Debug.Log("test");
+    //    try
+    //    {
+    //        // Await the call to GetPlayerNameAsync to get the player's name
+    //        string playerName = await AuthenticationService.Instance.GetPlayerNameAsync(true);
+    //        PlayerPrefs.SetString("playerName", playerName);
+    //
+    //        //LoadUsernamesFromLeaderboard();
+    //
+    //        if (playerName.Length < 15) //5 added on with hash and number by unity
+    //        {
+    //            //CanvasManager.instance.TogglePickUsernameCanvas();
+    //        }
+    //        else
+    //        {
+    //            LoadUsernamesFromLeaderboard();
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Debug.LogError("Error retrieving player name: " + ex.Message);
+    //        //RandomUserNameTextObject.SetActive(true);
+    //    }
+    //}
 
-            if (playerName.Length < 15) //5 added on with hash and number by unity
-            {
-                //CanvasManager.instance.TogglePickUsernameCanvas();
-            }
-            else
-            {
-                LoadUsernamesFromLeaderboard();
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("Error retrieving player name: " + ex.Message);
-            //RandomUserNameTextObject.SetActive(true);
-        }
-    }
-
-    private async void LoadUsernamesFromLeaderboard()
+    public async void LoadUsernamesFromAllLeaderboards()
     {
         try
         {
+            var leaderboardIds = new[] { "HighScore", "High_Score_Stage_2", "High_Score_Stage_3" }; // Add your leaderboard IDs here
             var options = new GetScoresOptions
             {
-                Limit = 100 // Set the number of entries you want to retrieve
+                Limit = 250
             };
 
-            var leaderboardEntries = await LeaderboardsService.Instance.GetScoresAsync("HighScore", options); // Adjust the count as needed
-            existingUsernames.Clear(); // Clear existing cache to avoid duplicates
+            existingUsernames.Clear(); // Clear before starting
 
-            foreach (var entry in leaderboardEntries.Results)
+            foreach (var leaderboardId in leaderboardIds)
             {
-                existingUsernames.Add(entry.PlayerName.Substring(0, 14));
+                var leaderboardEntries = await LeaderboardsService.Instance.GetScoresAsync(leaderboardId, options);
+
+                foreach (var entry in leaderboardEntries.Results)
+                {
+                    var trimmedName = entry.PlayerName.Substring(0, Mathf.Min(entry.PlayerName.Length, 14));
+                    if (!existingUsernames.Contains(trimmedName))
+                    {
+                        existingUsernames.Add(trimmedName);
+                    }
+                }
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to load usernames from leaderboard: " + e.Message);
+            Debug.LogError("Failed to load usernames from leaderboards: " + e.Message);
         }
     }
 
@@ -156,7 +169,7 @@ public class DisplayNameManager : MonoBehaviour
         }
 
         //check display name is atleast 10 characters
-        if (displayName.Length < 10)
+        if (displayName.Length < 3)
         {
             saveNameButton.interactable = false;
 
@@ -181,7 +194,7 @@ public class DisplayNameManager : MonoBehaviour
         else
         {
             warnUsernameAlreadyUsedText?.SetActive(false);
-            if (displayName.Length > 9 && warnOffensiveUsernameText.activeInHierarchy == false) saveNameButton.interactable = true;
+            if (displayName.Length > 2 && warnOffensiveUsernameText.activeInHierarchy == false) saveNameButton.interactable = true;
         }       
     }
 
@@ -223,13 +236,18 @@ public class DisplayNameManager : MonoBehaviour
 
     public bool IsUsernameTaken(string username)
     {
-        foreach (string takenName in existingUsernames)
+        string inputBase = username.Split('#')[0].ToLower();
+
+        foreach (string taken in existingUsernames)
         {
-            if (username.ToLower().Contains(takenName.ToLower()))
+            string takenBase = taken.Split('#')[0].ToLower();
+
+            if (inputBase == takenBase)
             {
-                return true; // Taken username detected
+                return true;
             }
         }
-        return false; // No offensive content found
+
+        return false;
     }
 }

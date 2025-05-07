@@ -83,7 +83,6 @@ public class CanvasManager : MonoBehaviour
         levelImage.SetActive(false);
     }
 
-
     public void ShowAd() => RewardedAdsButton.instance.ShowAd();
 
     public void AddToContinueStreakAndCloseContinueCanvas() => StartCoroutine(ProgressCanvasStreak());
@@ -154,7 +153,6 @@ public class CanvasManager : MonoBehaviour
             fillBar.color = new Color(0.372549f, 0.3411765f, 0.3098039f); // Grey
     }
 
-
     public void ChangeContinueStreakPrize(int tally)
     {
         SetContinueStreakPrize(SaveSystem.GetInt("ContinueStreakPrize"));
@@ -208,7 +206,6 @@ public class CanvasManager : MonoBehaviour
 
             tempContinueTallyValue = SaveSystem.GetInt("ContinueTally");
             SaveSystem.SetInt("ContinueTally", 0);
-
 
             continueCanvas.SetActive(true);
             continueCanvas.transform.GetChild(0).transform.GetChild(2).GetComponent<Button>().interactable = SaveSystem.GetInt("SkipAdTokens") > 0;
@@ -362,7 +359,6 @@ public class CanvasManager : MonoBehaviour
         {
             changeUsernameBtn.interactable = true;
         }
-
     }
 
     public void ToggleLanguageSelectCanvas()
@@ -476,6 +472,7 @@ public class CanvasManager : MonoBehaviour
         if (inputNameCanvas.activeSelf == false)
         {
             flagImage.sprite = flags[PlayerPrefs.GetInt("FlagNumber")];
+            DisplayNameManager.Instance.LoadUsernamesFromAllLeaderboards();
         }
 
         inputNameCanvas.SetActive(!inputNameCanvas.activeSelf);

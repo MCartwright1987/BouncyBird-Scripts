@@ -120,6 +120,13 @@ public class GameManager : MonoBehaviour
         UpdateLevel();
     }
 
+    public void TestButton()
+    {
+        TransitionManager.Instance.PlayTransition(5f);
+    }
+
+    public void UpdateLevelDelayed() => Invoke("UpdateLevel", 0.2f);
+
     public void UpdateLevel()
     {
         if (levelNumber == 3)
@@ -181,6 +188,8 @@ public class GameManager : MonoBehaviour
         Player.Instance.SwitchMoonGlowColor();
 
         BackgroundsManager.instance.SwitchButterflyColor();
+
+        ToggleDisableBirdAndLevelSelect();
     }
 
     public void SetNewHighestScoreTrue() => PlayerPrefs.SetInt("newHighScore", 1);
@@ -195,6 +204,7 @@ public class GameManager : MonoBehaviour
     
             UpdateTimer();
         }
+        //DisplayManager.instance.SetScreenSize();
     }
 
     public void PlayHighScoreAnimation()
