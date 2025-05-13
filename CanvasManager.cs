@@ -14,7 +14,7 @@ public class CanvasManager : MonoBehaviour
     public static CanvasManager instance;
 
     [SerializeField] GameObject debugCanvas;
-    [SerializeField] GameObject leaderBoardCanvas;
+    public GameObject leaderBoardCanvas;
     [SerializeField] GameObject selectLanguageCanvas;
     public GameObject settingsCanvas;
     [SerializeField] GameObject shopCanvas;
@@ -61,16 +61,21 @@ public class CanvasManager : MonoBehaviour
 
     [SerializeField] GameObject levelImage;
 
+    [SerializeField] GameObject[] LeaderboardStageNumberText;
+
+
     private void Awake()
     {
         instance = this;     
     }
 
-    IEnumerator ActivateBlockButtonsImageBriefly()
+    public void SwitchLeaderBoardStageNumberText()
     {
-        blockLeaderBoardButtonImage.SetActive(true);
-        yield return new WaitForSeconds(1.1f);
-        blockLeaderBoardButtonImage.SetActive(false);
+        for (int i = 0; i < LeaderboardStageNumberText.Length; i++)
+        {
+            if (i + 1!= GameManager.levelNumber) LeaderboardStageNumberText[i].SetActive(false);
+            else LeaderboardStageNumberText[i].SetActive(true);
+        }
     }
 
     public void ActivateStartScreenAnimations()
@@ -370,11 +375,13 @@ public class CanvasManager : MonoBehaviour
     {
         if (shopCanvas.activeSelf)
         {
-            int playerIndex = PlayerSelectMenu.instance.playerSelectIndex;
-            PlayerSelectMenu.instance.SwitchPlayerImage(playerIndex);
-
-            shopCanvas.SetActive(false);
-            birdSelectCanvas.SetActive(true);
+            if (startScreenCanvas.activeSelf)
+            {
+                int playerIndex = PlayerSelectMenu.instance.playerSelectIndex;
+                PlayerSelectMenu.instance.SwitchPlayerImage(playerIndex);
+                birdSelectCanvas.SetActive(true);
+            }          
+            shopCanvas.SetActive(false);           
         }
         else
         {
@@ -434,9 +441,8 @@ public class CanvasManager : MonoBehaviour
 
             internetUnreachableCanvas.transform.GetChild(0).transform.GetChild(4).gameObject.SetActive(false);
             internetUnreachableCanvas.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
-          
-            birdSelectCanvas.SetActive(true);
-                    
+
+            if (startScreenCanvas.activeSelf) birdSelectCanvas.SetActive(true);
         }
         else
         {
@@ -452,8 +458,8 @@ public class CanvasManager : MonoBehaviour
         if (leaderBoardCanvas.activeSelf)
         {
             leaderBoardCanvas.SetActive(false);
-            LeaderboardManager.Instance.yourScoreButton.interactable = false;
-            StartCoroutine(ActivateBlockButtonsImageBriefly());
+            LeaderboardManager.Instance.SetButtonsCooldown();
+            //StartCoroutine(ActivateBlockButtonsImageBriefly());
         }
         else if (Application.internetReachability == NetworkReachability.NotReachable ||
             UnityServicesInitializer.instance.userAuthenticated == false)

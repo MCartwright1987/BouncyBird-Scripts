@@ -166,6 +166,7 @@ namespace Samples.Purchasing.Core.BuyingConsumables
                 AdsInitializer.instance.gameObject.SetActive(false);
                 GameManager.instance.skipAdsTokensTopOfScreen.SetActive(false);
                 GameManager.instance.StartScreenPlayAdBtn.SetActive(false);
+                CanvasManager.instance.continueCanvas.SetActive(false);
                 //unlock continue streak unlock as obsolete.
                 GameManager.instance.UnlockPlayer("player10Unlocked", 10, false);
             }            

@@ -93,6 +93,9 @@ public class Player : MonoBehaviour
 
         if (rigidBody.velocity.y > 23) rigidBody.velocity = new Vector2(rigidBody.velocity.x, 23);
         if (rigidBody.velocity.y < -23) rigidBody.velocity = new Vector2(rigidBody.velocity.x, -23);
+
+        //if (rigidBody.velocity.y > 10) rigidBody.velocity = new Vector2(rigidBody.velocity.x, 10);
+
         if (rigidBody.velocity.x > 6) rigidBody.velocity = new Vector2(7, rigidBody.velocity.y);
         if (rigidBody.velocity.x < -6) rigidBody.velocity = new Vector2(-7, rigidBody.velocity.y);
 
@@ -108,6 +111,9 @@ public class Player : MonoBehaviour
         {
             if (rigidBody.velocity.x > -0.01f) spriteRenderer.flipX = false;
             else spriteRenderer.flipX = true;
+
+           //if (rigidBody.velocity.x > -0.01f) transform.rotation = Quaternion.identity;
+           //else transform.eulerAngles = new Vector3()
         }
         
         // make bird slowly move to being upright if it is not colliding
@@ -156,7 +162,10 @@ public class Player : MonoBehaviour
             //Limit speed so bird can only move up 3 levels maximum
             if (rigidBody.velocity.y > 16.5) rigidBody.velocity = new Vector2(rigidBody.velocity.x, 16.5f);     
         }
+
         if (other.tag == "PowerUp") powerUpsHit++;
+
+        if (other.tag == "Coin") other.gameObject.SetActive(false);
     }
 
     public void Respawn()

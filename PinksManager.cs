@@ -21,6 +21,30 @@ public class PinksManager : MonoBehaviour
         instance = this;
     }
 
+    public void StartFailsafe()
+    {
+        InvokeRepeating(nameof(CheckForPinkFail), 20f, 1.5f);
+    }
+
+    void CheckForPinkFail()
+    {
+        bool anyActive = false;
+        for (int i = 0; i < pinks.Length; i++)
+        {
+            if (pinks[i].activeSelf)
+            {
+                anyActive = true;
+                break;
+            }
+        }
+
+        if (!anyActive)
+        {
+            Debug.LogWarning("Failsafe triggered: all pinks inactive.");
+            SpawnPink();
+        }
+    }
+
     public void SwitchDirectionDown(bool down)
     {
         if (down)
@@ -46,49 +70,130 @@ public class PinksManager : MonoBehaviour
         }
     }
 
+    // public void SpawnPink()
+    // {
+    //     int obj = Random.Range(0, pinks.Length);
+    //     int counter = 0;
+    //
+    //     // Re-roll if pad is already active or the two middle pads try to spawn consecutively
+    //     while (pinks[obj].activeSelf ||
+    //           (obj == 3 && lastPink == pinks[4]) ||
+    //           (obj == 4 && lastPink == pinks[3]))
+    //     {
+    //         obj = Random.Range(0, pinks.Length);
+    //         counter++;
+    //
+    //         // Select the highest pink pad or lowest if stage 2 if all are active
+    //         if (counter == pinks.Length)
+    //         {
+    //             if (!movingDown)
+    //             {
+    //                 float maxY = float.MinValue;
+    //                 for (int i = 0; i < pinks.Length; i++)
+    //                 {
+    //                     if (pinks[i].transform.position.y > maxY)
+    //                     {
+    //                         maxY = pinks[i].transform.position.y;
+    //                         obj = i;
+    //                     }
+    //                 }
+    //             }
+    //             else 
+    //             {
+    //                 float minY = float.MaxValue;
+    //                 for (int i = 0; i < pinks.Length; i++)
+    //                 {
+    //                     if (pinks[i].transform.position.y < minY)
+    //                     {
+    //                         minY = pinks[i].transform.position.y;
+    //                         obj = i;
+    //                     }
+    //                 }
+    //             }
+    //             
+    //             break; // Exit the loop since we've found the highest or lowest pink
+    //         }
+    //     }
+    //
+    //     lastPink = pinks[obj];
+    //
+    //     if (movingDown)
+    //     {
+    //         pinks[obj].transform.position = new Vector2(pinks[obj].transform.position.x, GameManager.instance.spawningObjectsAnchor.position.y + 11);
+    //         highestPink = pinks[obj]; // if moving downwards the highest pink is last spawned
+    //
+    //         AssignLowestPink();
+    //
+    //         if (lowestPink == null) lowestPink = highestPink; //the very first pink doesn't assign both
+    //     }
+    //     else
+    //     {
+    //         pinks[obj].transform.position = new Vector2(pinks[obj].transform.position.x, GameManager.instance.spawningObjectsAnchor.position.y - 9);
+    //         lowestPink = pinks[obj];
+    //
+    //         AssignHighestPink();
+    //
+    //         if (highestPink == null) highestPink = lowestPink;
+    //     }
+    //
+    //     pinks[obj].SetActive(true);
+    // }
+
     public void SpawnPink()
     {
-        int obj = Random.Range(0, pinks.Length);
-        int counter = 0;
+        int obj = -1;
 
-        // Re-roll if pad is already active or the two middle pads try to spawn consecutively
-        while (pinks[obj].activeSelf ||
-              (obj == 3 && lastPink == pinks[4]) ||
-              (obj == 4 && lastPink == pinks[3]))
+        // Try to find a valid pink index
+        List<int> validIndices = new List<int>();
+        for (int i = 0; i < pinks.Length; i++)
         {
-            obj = Random.Range(0, pinks.Length);
-            counter++;
+            bool middlePadBlocked =
+             (i == 3 && lastPink == pinks[4]) ||
+             (i == 4 && lastPink == pinks[3]);
 
-            // Select the highest pink pad or lowest if stage 2 if all are active
-            if (counter == pinks.Length)
+            if (!pinks[i].activeSelf && !middlePadBlocked)
             {
-                if (!movingDown)
-                {
-                    float maxY = float.MinValue;
-                    for (int i = 0; i < pinks.Length; i++)
-                    {
-                        if (pinks[i].transform.position.y > maxY)
-                        {
-                            maxY = pinks[i].transform.position.y;
-                            obj = i;
-                        }
-                    }
-                }
-                else 
-                {
-                    float minY = float.MaxValue;
-                    for (int i = 0; i < pinks.Length; i++)
-                    {
-                        if (pinks[i].transform.position.y < minY)
-                        {
-                            minY = pinks[i].transform.position.y;
-                            obj = i;
-                        }
-                    }
-                }
-                
-                break; // Exit the loop since we've found the highest or lowest pink
+                validIndices.Add(i);
             }
+            else if (!pinks[i].activeSelf)
+            {
+                // Fallback: allow temporarily breaking the rule if it's the only one left
+                obj = i;
+            }
+        }
+
+        // If none are valid, fallback to highest or lowest pink
+        if (validIndices.Count == 0)
+        {
+            if (!movingDown)
+            {
+                float maxY = float.MinValue;
+                for (int i = 0; i < pinks.Length; i++)
+                {
+                    if (pinks[i].transform.position.y > maxY)
+                    {
+                        maxY = pinks[i].transform.position.y;
+                        obj = i;
+                    }
+                }
+            }
+            else
+            {
+                float minY = float.MaxValue;
+                for (int i = 0; i < pinks.Length; i++)
+                {
+                    if (pinks[i].transform.position.y < minY)
+                    {
+                        minY = pinks[i].transform.position.y;
+                        obj = i;
+                    }
+                }
+            }
+        }
+        else
+        {
+            int randomIndex = Random.Range(0, validIndices.Count);
+            obj = validIndices[randomIndex];
         }
 
         lastPink = pinks[obj];
@@ -96,11 +201,11 @@ public class PinksManager : MonoBehaviour
         if (movingDown)
         {
             pinks[obj].transform.position = new Vector2(pinks[obj].transform.position.x, GameManager.instance.spawningObjectsAnchor.position.y + 11);
-            highestPink = pinks[obj]; // if moving downwards the highest pink is last spawned
+            highestPink = pinks[obj];
 
             AssignLowestPink();
 
-            if (lowestPink == null) lowestPink = highestPink; //the very first pink doesn't assign both
+            if (lowestPink == null) lowestPink = highestPink;
         }
         else
         {
@@ -114,6 +219,7 @@ public class PinksManager : MonoBehaviour
 
         pinks[obj].SetActive(true);
     }
+
 
     public void AssignLowestPink()
     {

@@ -46,8 +46,13 @@ public class LeaderboardManager : MonoBehaviour
     public int thisPlayerRank;
 
     public Button yourScoreButton;
+    [SerializeField] Button minusLevelBtn;
+    [SerializeField] Button plusLevelBtn;
+    [SerializeField] Button TopScoreBtn;
 
     public float temp;
+
+    public bool canceledLoadLeaderBoard = false;
 
     // Unity Servies Authenticated by Ads Script
     private void Start()
@@ -60,6 +65,25 @@ public class LeaderboardManager : MonoBehaviour
         {
             Destroy(gameObject); // Ensure only one instance exists
         }
+    }
+
+    public void SetCancelLoadLeaderboard()=> canceledLoadLeaderBoard = true;
+    public void SetButtonsCooldown()
+    {
+        minusLevelBtn.interactable = false;
+        plusLevelBtn.interactable = false;
+        yourScoreButton.interactable = false;
+        TopScoreBtn.interactable = false;
+
+        //Invoke("EnableButtons", 0.5f);
+    }
+
+    public void EnableButtons()
+    {
+        minusLevelBtn.interactable = true;
+        plusLevelBtn.interactable = true;
+        yourScoreButton.interactable = true;
+        TopScoreBtn.interactable = true;
     }
 
     public async void SubmitScoreLeaderBoard1(long score)
@@ -193,6 +217,7 @@ public class LeaderboardManager : MonoBehaviour
     public async void ShowLeaderboard()
     {
         //bool touchedCreen = false;
+        canceledLoadLeaderBoard = false;
 
         ClearLeaderBoard();
         VerticalGroupsContainer.position = new Vector2(VerticalGroupsContainer.position.x, 0);
@@ -210,7 +235,7 @@ public class LeaderboardManager : MonoBehaviour
             currentOffset += scoresPerPage;
 
             // Continue loading more scores if needed
-            while (allEntries.Count < 200)  // Adjust condition as necessary
+            while (!canceledLoadLeaderBoard && allEntries.Count < 200)  // Adjust condition as necessary
             {
                 //if (Input.GetMouseButton(0) || Input.touchCount > 0) touchedCreen = true;
 
@@ -227,16 +252,16 @@ public class LeaderboardManager : MonoBehaviour
                 }
             }
 
+            
+
             // Now that all entries are loaded, find the player's rank
             thisPlayerRank = allEntries.FindIndex(entry => entry.PlayerName == username) + 1;
 
-            // If the player's rank is above 10, call the scroll coroutine
-            //if (thisPlayerRank > 10 && touchedCreen == false)
-            //{
-            //    StartCoroutine(ScrollToRankCoroutine(thisPlayerRank));
-            //}
+            //yourScoreButton.interactable = true;
 
-            yourScoreButton.interactable = true;
+            if (canceledLoadLeaderBoard) canceledLoadLeaderBoard = false;
+            else EnableButtons();
+
         }
     }
 

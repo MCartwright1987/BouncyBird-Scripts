@@ -118,11 +118,38 @@ public class GameManager : MonoBehaviour
         DisplayManager.instance.SetScreenSize();
 
         UpdateLevel();
+
+        //Application.targetFrameRate = 3;
     }
 
     public void TestButton()
     {
-        TransitionManager.Instance.PlayTransition(5f);
+        Animator mainAnimator = Player.Instance.animator;
+        Animator childAnimator = Player.Instance.gameObject.transform.GetChild(2).GetComponent<Animator>();
+
+        if (mainAnimator.enabled)
+        {
+            mainAnimator.Rebind();
+            mainAnimator.Update(0f);
+
+            childAnimator.Rebind();
+            childAnimator.Update(0f);
+
+            mainAnimator.enabled = false;
+            childAnimator.enabled = false;
+        }
+        else
+        {
+            mainAnimator.enabled = true;
+            childAnimator.enabled = true;
+
+            // Reset animators
+            mainAnimator.Rebind();
+            mainAnimator.Update(0f);
+
+            childAnimator.Rebind();
+            childAnimator.Update(0f);
+        }
     }
 
     public void UpdateLevelDelayed() => Invoke("UpdateLevel", 0.2f);
@@ -190,6 +217,8 @@ public class GameManager : MonoBehaviour
         BackgroundsManager.instance.SwitchButterflyColor();
 
         ToggleDisableBirdAndLevelSelect();
+
+        CanvasManager.instance.SwitchLeaderBoardStageNumberText();
     }
 
     public void SetNewHighestScoreTrue() => PlayerPrefs.SetInt("newHighScore", 1);
@@ -259,6 +288,8 @@ public class GameManager : MonoBehaviour
         float minutes = Mathf.FloorToInt(sessionTime / 60); // Convert seconds to minutes
         float seconds = Mathf.FloorToInt(sessionTime % 60); // Get the remaining seconds (% divides it and returns the remainder)
         sessionTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        //Time.timeScale = 15f;
     }
 
     public void MoveCameraSmoothly()=> StartCoroutine(MoveCameraSmoothlyCoroutine());
@@ -452,6 +483,8 @@ public class GameManager : MonoBehaviour
         Invoke("ToggleDisableBirdAndLevelSelect", 0.5f);
 
         if (levelNumber == 2) PinksManager.instance.SwitchDirectionDown(true);
+
+        PinksManager.instance.StartFailsafe();
     }
 
     public void ToggleDisableBirdAndLevelSelect()

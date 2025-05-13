@@ -21,8 +21,6 @@ public class WorldSelectMenu : MonoBehaviour
 
     public int playerSelectIndex = 0;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         instance = this;
@@ -68,8 +66,14 @@ public class WorldSelectMenu : MonoBehaviour
 
         GameManager.levelNumber = currentLevel;
 
-        GameManager.instance.ToggleDisableBirdAndLevelSelect();
-        TransitionManager.Instance.PlayTransition(0.6f);
-        GameManager.instance.UpdateLevelDelayed();
+
+        if (CanvasManager.instance.leaderBoardCanvas.activeSelf == false)
+        {
+            GameManager.instance.ToggleDisableBirdAndLevelSelect();
+            TransitionManager.Instance.PlayTransition(0.6f);
+            GameManager.instance.UpdateLevelDelayed();
+        }
+        else GameManager.instance.UpdateLevel();
+
     }
 }
